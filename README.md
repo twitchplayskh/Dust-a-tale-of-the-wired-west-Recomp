@@ -14,6 +14,8 @@ restoration.
 This is a preview release. The campaign reaches its ending in scripted
 verification, with additional native-window checks. Some optional story paths,
 presentation details and hardware configurations still need verification.
+Additional checks cover Oona and Isao's alternate ring-recovery path, including
+the piano puzzle, cancellation and retries.
 
 ## Build
 
@@ -41,8 +43,9 @@ developer probes, test assets and compiled binaries are excluded from this
 source distribution. `BUILD_TESTING` and `DUST_BUILD_TOOLS` are development
 options for the separate research workspace; leave both off here.
 
-Each push also runs the Windows build workflow. Its Actions artifact contains
-the portable applications, notices and matching source archive.
+Each push verifies a Windows development build. Routine source updates do not
+create release binaries or downloadable packages; releases are reserved for
+substantial milestones.
 
 ## Play
 

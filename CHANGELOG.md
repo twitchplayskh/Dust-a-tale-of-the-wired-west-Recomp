@@ -2,6 +2,15 @@
 
 ## 2026-10-25 — update
 
+Verify alternate ring recovery and use development-only source checks
+
+- Verify earned Oona-to-Isao ring ownership, piano cancellation/retry/solution and return to Jones.
+- Add a private native piano regression target; test files remain outside the public checkout.
+- Change per-push Windows CI to Debug verification without release artifacts.
+- Reserve release builds and packages for substantial milestones; retain the original-game-files requirement.
+
+## 2026-10-25 — update
+
 State original game files requirement prominently at the top of the README
 
 ## 2026-10-25 — update

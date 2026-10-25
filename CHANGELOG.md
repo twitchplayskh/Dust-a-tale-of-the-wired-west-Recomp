@@ -2,6 +2,10 @@
 
 ## 2026-10-25 — update
 
+State original game files requirement prominently at the top of the README
+
+## 2026-10-25 — update
+
 Prepare source-only Windows preview and portable build
 
 - Publish production C++ source and CMake instructions; exclude tests, game assets and binaries.

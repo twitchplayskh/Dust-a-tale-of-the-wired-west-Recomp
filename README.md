@@ -1,5 +1,11 @@
 # Dust: A Tale of the Wired West — native reconstruction
 
+**Requires the original Dust: A Tale of the Wired West game files to play.**
+This repository and its downloadable builds contain only the reconstructed
+engine. They do not include the original game files and cannot be played
+without them. Use your own original installation, then select its folder
+containing `DATA` and `MOVIES` in the launcher using **Browse**.
+
 A Windows x64 C++20 reconstruction that reads the original game's data files.
 The native launcher provides windowed and borderless display modes, 4K aspect
 fit or integer scaling, audio preferences, captions and optional character

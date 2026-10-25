@@ -20,6 +20,7 @@ Movie wipes retain the current room image and fade level while revealing the
 film, including transitions between chained movies.
 Native checks cover all 71 history/Yunni book pages, forward/back navigation,
 page limits and Yunni's bookmark controls.
+All ten history-book chapter links and returns to contents also pass native checks.
 
 ## Build
 

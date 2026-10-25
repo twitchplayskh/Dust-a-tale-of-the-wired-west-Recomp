@@ -2,6 +2,10 @@
 
 ## 2026-10-25 — update
 
+Verify all ten native history chapter links, their page images and returns to contents; preserve original masked tab input. Debug checks only.
+
+## 2026-10-25 — update
+
 Verify all 71 history and Yunni book pages through native input, reverse pixel checks, endpoint limits and bookmark jump/fold/unfold; retain torn-page checks. Debug verification only, with no release package.
 
 ## 2026-10-25 — update

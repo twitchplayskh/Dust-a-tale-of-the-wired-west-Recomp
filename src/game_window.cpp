@@ -78,6 +78,9 @@ struct Application {
     bool fistfightTest = false, fistfightWin = false;
     int fistfightSteps = 0, fistfightPunches = 0;
     bool inventoryInfoTest = false, inventoryInfoMovieSeen = false, inventoryInfoPages = false;
+    bool inventoryInfoChapters = false;
+    int inventoryInfoChapter = 0;
+    uint64_t inventoryInfoContentsHash = 0;
     std::vector<uint32_t> inventoryInfoFirstPage;
     std::vector<uint64_t> inventoryInfoPageHashes;
     int inventoryInfoPage = 0;
@@ -1597,6 +1600,15 @@ struct Application {
                     page.replace_filename(snapshot.stem().string() + "-nextpage.ppm");
                     ppm(page, world.rgb, 512, 384);
                 }
+                if (inventoryInfoChapters) {
+                    if (!historyBook)
+                        throw std::runtime_error("chapter fixture requires the history book");
+                    inventoryInfoPage = 2;
+                    inventoryInfoContentsHash = verifyPage(false, false);
+                    inventoryInfoStage = 15;
+                    postTarget("button", "ch1");
+                    break;
+                }
                 pageClick(backX, historyBook ? 350 : 150);
                 break;
             case 4:
@@ -1691,6 +1703,32 @@ struct Application {
                 log << "PASS native Yunni bookmark jump/fold/unfold/page-turn\n";
                 inventoryInfoStage = 5;
                 pageClick(5, 5);
+                break;
+            case 15: {
+                // Destinations from the ten authored HIST.FLT button handlers.
+                constexpr int destinations[] = {3, 8, 12, 18, 21, 24, 31, 35, 38, 44};
+                inventoryInfoPage = destinations[inventoryInfoChapter];
+                const auto hash = verifyPage(false, false);
+                if (game->props().at("histbord").degree != 2)
+                    throw std::runtime_error("native history chapter lost its contents tab");
+                log << "book chapter=" << inventoryInfoChapter + 1 << " page=" << inventoryInfoPage
+                    << " hash=" << hash << '\n';
+                pageClick(170, 10);
+                break;
+            }
+            case 16:
+                inventoryInfoPage = 2;
+                if (verifyPage(false, false) != inventoryInfoContentsHash ||
+                    game->props().at("histbord").degree != 1)
+                    throw std::runtime_error("native chapter tab did not restore contents pixels");
+                if (++inventoryInfoChapter < 10) {
+                    inventoryInfoStage = 15;
+                    postTarget("button", "ch" + std::to_string(inventoryInfoChapter + 1));
+                } else {
+                    log << "PASS native history all 10 chapter links and contents returns\n";
+                    inventoryInfoStage = 5;
+                    pageClick(5, 5);
+                }
                 break;
             default:
                 throw std::runtime_error(
@@ -2530,7 +2568,9 @@ int wmain(int argc, wchar_t **argv) {
         if (fistfight &&
             (argc < 6 || (std::wstring(argv[5]) != L"win" && std::wstring(argv[5]) != L"loss")))
             throw std::runtime_error("--fistfight-smoke requires checkpoint and win|loss");
-        bool inventoryPages = argc > 3 && std::wstring(argv[3]) == L"--inventory-pages-smoke";
+        bool inventoryChapters = argc > 3 && std::wstring(argv[3]) == L"--inventory-chapters-smoke";
+        bool inventoryPages =
+            inventoryChapters || (argc > 3 && std::wstring(argv[3]) == L"--inventory-pages-smoke");
         bool inventoryInfo =
             inventoryPages || (argc > 3 && std::wstring(argv[3]) == L"--inventory-info-smoke");
         if (inventoryInfo && argc < 6)
@@ -2582,6 +2622,7 @@ int wmain(int argc, wchar_t **argv) {
         state.fistfightWin = fistfight && std::wstring(argv[5]) == L"win";
         state.inventoryInfoTest = inventoryInfo;
         state.inventoryInfoPages = inventoryPages;
+        state.inventoryInfoChapters = inventoryChapters;
         if (inventoryInfo)
             state.inventoryInfoMovie = std::filesystem::path(argv[5]).string();
         state.handoffTest = handoff;

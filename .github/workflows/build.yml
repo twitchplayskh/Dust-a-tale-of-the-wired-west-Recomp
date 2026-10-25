@@ -1,0 +1,25 @@
+name: Build Windows preview
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -A x64 -DDUST_STATIC_RUNTIME=ON
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Collect portable build and matching source
+        shell: pwsh
+        run: |
+          cmake --install build --config Release --prefix portable
+          Copy-Item README.md, CHANGELOG.md portable
+          git archive --format=zip --prefix=Dust-Recomp-source/ --output=portable/Source.zip HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Dust-Recomp-Windows-x64-preview
+          path: portable/

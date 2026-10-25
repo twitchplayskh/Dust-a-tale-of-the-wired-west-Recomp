@@ -152,9 +152,13 @@ int MoviePlayer::width() const {
 int MoviePlayer::height() const {
     return movie_.segments[segment_].height;
 }
-void MoviePlayer::start(uint64_t tick, size_t segment, size_t frame) {
+void MoviePlayer::start(uint64_t tick, size_t segment, size_t frame,
+                        std::span<const uint32_t> backdrop) {
     require(segment < movie_.segments.size(), "movie resume segment out of range");
     require(frame < movie_.segments[segment].frames.size(), "movie resume frame out of range");
+    require(backdrop.empty() || backdrop.size() == size_t(movie_.segments[segment].width) *
+                                                       movie_.segments[segment].height,
+            "movie backdrop dimensions do not match canvas");
     segment_ = segment;
     frame_ = 0;
     done_ = false;
@@ -165,14 +169,17 @@ void MoviePlayer::start(uint64_t tick, size_t segment, size_t frame) {
     chain_.clear();
     events_.clear();
     lastTick_ = tick;
-    enterSegment(tick, frame);
+    enterSegment(tick, frame, backdrop);
 }
-void MoviePlayer::enterSegment(uint64_t tick, size_t initialFrame) {
+void MoviePlayer::enterSegment(uint64_t tick, size_t initialFrame,
+                               std::span<const uint32_t> backdrop) {
     auto &s = movie_.segments[segment_];
     frame_ = 0;
     paletteUnset_ = true;
     buffer_ = {};
     screen_.assign(size_t(s.width) * s.height, 0);
+    backdrop_.assign(backdrop.begin(), backdrop.end());
+    revealed_.assign(backdrop_.empty() ? 0 : screen_.size(), 0);
     // Reconstruct delta-picture history silently when returning into a movie.
     // Do not replay earlier voices or mark unvisited action frames as entered.
     for (size_t i = 0; i < initialFrame; ++i) {
@@ -230,6 +237,10 @@ void MoviePlayer::render(uint64_t tick) {
     }
     rgb_.resize(screen_.size());
     for (size_t i = 0; i < screen_.size(); ++i) {
+        if (!backdrop_.empty() && !revealed_[i]) {
+            rgb_[i] = backdrop_[i];
+            continue;
+        }
         auto &p = palette_[screen_[i]];
         rgb_[i] = uint32_t(p[0] >> 8) << 16 | uint32_t(p[1] >> 8) << 8 | (p[2] >> 8);
     }
@@ -254,9 +265,13 @@ void MoviePlayer::paintEffect(uint64_t tick) {
             return;
         const int width = std::min(dst.right - dst.left, s.width - src.left);
         const int height = std::min(dst.bottom - dst.top, s.height - src.top);
-        for (int y = 0; y < height; ++y)
+        for (int y = 0; y < height; ++y) {
             std::copy_n(buffer_.pixels.begin() + size_t(src.top + y) * buffer_.w + src.left, width,
                         screen_.begin() + size_t(dst.top + y) * s.width + dst.left);
+            if (!revealed_.empty())
+                std::fill_n(revealed_.begin() + size_t(dst.top + y) * s.width + dst.left, width,
+                            uint8_t(1));
+        }
     };
     auto same = [&](MovieRect r) { copy(r, r); };
     const int n = std::max(s.rate, f.holdTicks);
@@ -464,8 +479,11 @@ bool MoviePlayer::advance(uint64_t tick, bool voicePlaying) {
         return true;
     }
     if (frame_ + 1 == s.frames.size() && segment_ + 1 < movie_.segments.size()) {
+        const auto &next = movie_.segments[segment_ + 1];
+        const bool retain = !backdrop_.empty() && next.width == s.width && next.height == s.height;
         ++segment_;
-        enterSegment(tick);
+        enterSegment(tick, 0,
+                     retain ? std::span<const uint32_t>(rgb_) : std::span<const uint32_t>{});
     } else
         finish();
     return true;

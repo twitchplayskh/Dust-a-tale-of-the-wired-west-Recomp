@@ -47,7 +47,9 @@ struct MovieAudioEvent {
 class MoviePlayer {
   public:
     explicit MoviePlayer(const Movie &);
-    void start(uint64_t tick = 0, size_t segment = 0, size_t frame = 0);
+    // Optional unscaled RGB canvas beneath the movie's first transition.
+    void start(uint64_t tick = 0, size_t segment = 0, size_t frame = 0,
+               std::span<const uint32_t> backdrop = {});
     bool advance(uint64_t tick, bool voicePlaying);
     void skip();
     bool click(int x, int y, uint64_t tick);
@@ -96,12 +98,14 @@ class MoviePlayer {
     uint64_t effectApplied_ = 0;
     FrameBuffer buffer_;
     Bytes screen_;
+    std::vector<uint32_t> backdrop_;
+    Bytes revealed_;
     std::array<std::array<uint16_t, 3>, 256> palette_{};
     std::vector<uint32_t> rgb_;
     std::vector<MovieAudioEvent> events_;
     std::string chain_;
     std::optional<MovieHotspot> clicked_;
-    void enterSegment(uint64_t, size_t initialFrame = 0);
+    void enterSegment(uint64_t, size_t initialFrame = 0, std::span<const uint32_t> backdrop = {});
     void enterFrame(uint64_t);
     void render(uint64_t);
     void paintEffect(uint64_t);

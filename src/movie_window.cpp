@@ -172,10 +172,25 @@ struct WindowState {
         if (options.testCallIndex >= 0)
             std::cerr << "movie test load " << p.filename().string() << " frame=" << frame << '\n';
         path = p;
+        auto backdrop = player ? player->rgb() : options.backdrop;
+        const int backdropWidth = player ? player->width() : options.backdropWidth;
+        const int backdropHeight = player ? player->height() : options.backdropHeight;
         player.reset();
         movie = std::make_unique<Movie>(Movie::open(path));
         player = std::make_unique<MoviePlayer>(*movie);
-        player->start(now(), segment, frame);
+        std::vector<uint32_t> cropped;
+        if (!backdrop.empty()) {
+            if (backdropWidth <= 0 || backdropHeight <= 0 ||
+                backdrop.size() != size_t(backdropWidth) * backdropHeight)
+                throw std::runtime_error("invalid movie window backdrop");
+            const auto &s = movie->segments.at(segment);
+            cropped.resize(size_t(s.width) * s.height);
+            for (int y = 0; y < std::min(s.height, backdropHeight); ++y)
+                std::copy_n(backdrop.begin() + size_t(y) * backdropWidth,
+                            std::min(s.width, backdropWidth),
+                            cropped.begin() + size_t(y) * s.width);
+        }
+        player->start(now(), segment, frame, cropped);
         paintedFrame.reset();
         automaticClick.reset();
         ++result.movies;
@@ -367,6 +382,11 @@ LRESULT CALLBACK procedure(HWND window, UINT msg, WPARAM w, LPARAM l) {
             }
             BitBlt(paint.dc, 0, 0, client.right, client.bottom, dc, 0, 0, SRCCOPY);
             ++state->result.paints;
+            if (!state->options.testOpeningCapture.empty()) {
+                ppm(state->options.testOpeningCapture, state->player->rgb(), state->player->width(),
+                    state->player->height());
+                state->options.testOpeningCapture.clear();
+            }
             if (state->player)
                 state->paintedFrame =
                     std::pair(state->player->segmentIndex(), state->player->frameIndex());

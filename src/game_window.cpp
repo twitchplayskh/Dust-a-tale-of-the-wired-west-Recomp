@@ -403,6 +403,14 @@ struct Application {
             }
             sound.haltVoice();
             MovieWindowOptions options{window, true, smoke && !fullIntro ? size_t(20) : 0};
+            options.backdrop = pixels;
+            options.backdropWidth = 512;
+            options.backdropHeight = 384;
+            // Match the current room/puppet fade rather than exposing a bright
+            // cached image beneath a transition that started from darkness.
+            for (auto &c : options.backdrop)
+                c = uint32_t(((c >> 16) & 255) * brightness) << 16 |
+                    uint32_t(((c >> 8) & 255) * brightness) << 8 | uint32_t((c & 255) * brightness);
             if (inventoryInfoTest) {
                 if (CompareStringOrdinal(wide(m.name).c_str(), -1, wide(inventoryInfoMovie).c_str(),
                                          -1, TRUE) != CSTR_EQUAL)

@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 #include <windows.h>
 namespace dust {
 struct MovieWindowOptions {
@@ -19,6 +20,10 @@ struct MovieWindowOptions {
     bool testLiveHotspots = false;
     bool testPreferExitHotspot = false;
     int testCallIndex = -1;
+    // Logical pixels before scaling, cropped at the top left to the film canvas.
+    std::vector<uint32_t> backdrop;
+    int backdropWidth = 0, backdropHeight = 0;
+    std::filesystem::path testOpeningCapture;
 };
 struct MovieWindowResult {
     uint32_t actionFrames = 0;

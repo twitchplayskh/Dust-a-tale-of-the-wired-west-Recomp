@@ -16,6 +16,8 @@ verification, with additional native-window checks. Some optional story paths,
 presentation details and hardware configurations still need verification.
 Additional checks cover Oona and Isao's alternate ring-recovery path, including
 the piano puzzle, cancellation and retries.
+Movie wipes retain the current room image and fade level while revealing the
+film, including transitions between chained movies.
 
 ## Build
 

@@ -2,6 +2,10 @@
 
 ## 2026-10-25 — update
 
+Fix movie wipes revealing black instead of the current room; preserve fade levels and chained-film backdrops. Verified Debug transitions, native movie navigation, Help and piano paths.
+
+## 2026-10-25 — update
+
 Verify alternate ring recovery and use development-only source checks
 
 - Verify earned Oona-to-Isao ring ownership, piano cancellation/retry/solution and return to Jones.

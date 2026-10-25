@@ -2,6 +2,10 @@
 
 ## 2026-10-25 — update
 
+Verify all 71 history and Yunni book pages through native input, reverse pixel checks, endpoint limits and bookmark jump/fold/unfold; retain torn-page checks. Debug verification only, with no release package.
+
+## 2026-10-25 — update
+
 Fix movie wipes revealing black instead of the current room; preserve fade levels and chained-film backdrops. Verified Debug transitions, native movie navigation, Help and piano paths.
 
 ## 2026-10-25 — update

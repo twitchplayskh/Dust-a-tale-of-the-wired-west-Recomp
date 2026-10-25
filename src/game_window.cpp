@@ -79,6 +79,8 @@ struct Application {
     int fistfightSteps = 0, fistfightPunches = 0;
     bool inventoryInfoTest = false, inventoryInfoMovieSeen = false, inventoryInfoPages = false;
     std::vector<uint32_t> inventoryInfoFirstPage;
+    std::vector<uint64_t> inventoryInfoPageHashes;
+    int inventoryInfoPage = 0;
     int inventoryInfoStage = 0, inventoryInfoDegree = 0;
     std::string inventoryInfoMovie, inventoryInfoItem;
     bool handoffTest = false;
@@ -1510,11 +1512,43 @@ struct Application {
         }
         if (inventoryInfoTest) {
             const bool historyBook = inventoryInfoItem == "history";
+            const bool fullBook = historyBook || inventoryInfoItem == "yunnibook";
+            const int backX = historyBook ? 50 : fullBook ? 210 : 100;
             const auto firstFlat = historyBook ? "flat 1" : "flat 0";
             const auto nextFlat = historyBook ? "flat 2" : "flat 1";
             const auto pageClick = [&](int x, int y) {
                 const auto p = clientPoint(window, x, y);
                 PostMessageW(window, WM_LBUTTONDOWN, MK_LBUTTON | testInput, MAKELPARAM(p.x, p.y));
+            };
+            const auto verifyPage = [&](bool remember, bool compare = true) {
+                if (game->flatName() != "flat " + std::to_string(inventoryInfoPage))
+                    throw std::runtime_error("native book navigation reached the wrong page");
+                captureWorld();
+                InvalidateRect(window, nullptr, FALSE);
+                UpdateWindow(window);
+                GdiFlush();
+                uint64_t hash = 14695981039346656037ull;
+                size_t lit = 0;
+                for (size_t i = 0; i < 512 * 384; ++i) {
+                    const auto pixel = canvasData[i] & 0xffffff;
+                    if (pixel != (world.rgb[i] & 0xffffff))
+                        throw std::runtime_error("native book canvas differs from composed page");
+                    lit += pixel != 0;
+                    hash = (hash ^ pixel) * 1099511628211ull;
+                }
+                if (lit < 128)
+                    throw std::runtime_error("native book page is blank");
+                if (remember) {
+                    inventoryInfoPageHashes.push_back(hash);
+                    auto page = snapshot;
+                    page.replace_filename(snapshot.stem().string() + "-page-" +
+                                          std::to_string(inventoryInfoPage) + ".ppm");
+                    ppm(page, {canvasData, 512 * 384}, 512, 384);
+                } else if (compare && hash != inventoryInfoPageHashes.at(size_t(inventoryInfoPage)))
+                    throw std::runtime_error("native book page changed after reverse navigation");
+                log << "book page=" << inventoryInfoPage << " hash=" << hash << " lit=" << lit
+                    << " direction=" << (remember ? "forward" : "back") << '\n';
+                return hash;
             };
             log << "inventory Info test stage=" << inventoryInfoStage
                 << " flat=" << game->flatName() << " movies=" << movies << "\n";
@@ -1563,14 +1597,20 @@ struct Application {
                     page.replace_filename(snapshot.stem().string() + "-nextpage.ppm");
                     ppm(page, world.rgb, 512, 384);
                 }
-                pageClick(historyBook ? 50 : 100, historyBook ? 350 : 150);
+                pageClick(backX, historyBook ? 350 : 150);
                 break;
             case 4:
                 captureWorld();
                 if (game->flatName() != firstFlat || world.rgb != inventoryInfoFirstPage)
                     throw std::runtime_error(
                         "native inventory book did not restore its first page");
-                pageClick(5, 5);
+                if (!fullBook) {
+                    pageClick(5, 5);
+                    break;
+                }
+                inventoryInfoStage = 7;
+                inventoryInfoPage = 0;
+                pageClick(backX, historyBook ? 350 : 150);
                 break;
             case 5:
                 if (game->flatName() != "avatar")
@@ -1588,8 +1628,69 @@ struct Application {
                     << " degree=" << inventoryInfoDegree << " movie=" << inventoryInfoMovie
                     << (inventoryInfoPages ? " pages forward/back/close" : "")
                     << " and exploration return\n";
+                if (!inventoryInfoPageHashes.empty())
+                    log << "PASS native book all " << inventoryInfoPageHashes.size()
+                        << " pages forward/back, endpoint limits and stable painted pixels\n";
                 log.flush();
                 PostMessageW(window, WM_CLOSE, 0, 0);
+                break;
+            case 7:
+                verifyPage(true);
+                if (inventoryInfoPage < (historyBook ? 49 : 20)) {
+                    ++inventoryInfoPage;
+                    inventoryInfoStage = 7;
+                }
+                pageClick(historyBook ? 450 : 300, historyBook ? 350 : 150);
+                break;
+            case 8:
+                verifyPage(false); // A further Next click must stay on the last page.
+                --inventoryInfoPage;
+                pageClick(backX, historyBook ? 350 : 150);
+                break;
+            case 9:
+                verifyPage(false);
+                if (inventoryInfoPage > 0) {
+                    --inventoryInfoPage;
+                    inventoryInfoStage = 9;
+                }
+                pageClick(backX, historyBook ? 350 : 150);
+                break;
+            case 10:
+                verifyPage(false); // A further Back click must stay on page zero.
+                if (!historyBook) {
+                    inventoryInfoPage = 11;
+                    pageClick(100, 10); // Authored bookmark tab jumps to the fold-out page.
+                    break;
+                }
+                inventoryInfoStage = 5;
+                pageClick(5, 5);
+                break;
+            case 11:
+                verifyPage(false);
+                if (game->props().at("yunnibord").degree != 2)
+                    throw std::runtime_error("native Yunni bookmark did not open");
+                pageClick(100, 150);
+                break;
+            case 12:
+                if (game->props().at("yunnibord").degree != 1 ||
+                    verifyPage(false, false) == inventoryInfoPageHashes.at(11))
+                    throw std::runtime_error("native Yunni bookmark did not fold");
+                pageClick(20, 100);
+                break;
+            case 13:
+                verifyPage(false);
+                if (game->props().at("yunnibord").degree != 2)
+                    throw std::runtime_error("native Yunni bookmark did not unfold");
+                --inventoryInfoPage;
+                pageClick(210, 150);
+                break;
+            case 14:
+                verifyPage(false);
+                if (game->props().at("yunnibord").degree != 0)
+                    throw std::runtime_error("native Yunni bookmark survived leaving its page");
+                log << "PASS native Yunni bookmark jump/fold/unfold/page-turn\n";
+                inventoryInfoStage = 5;
+                pageClick(5, 5);
                 break;
             default:
                 throw std::runtime_error(

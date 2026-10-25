@@ -18,6 +18,8 @@ Additional checks cover Oona and Isao's alternate ring-recovery path, including
 the piano puzzle, cancellation and retries.
 Movie wipes retain the current room image and fade level while revealing the
 film, including transitions between chained movies.
+Native checks cover all 71 history/Yunni book pages, forward/back navigation,
+page limits and Yunni's bookmark controls.
 
 ## Build
 

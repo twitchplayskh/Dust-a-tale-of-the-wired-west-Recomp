@@ -2,6 +2,10 @@
 
 ## 2026-10-25 — update
 
+Verify Ruby gun theft and its 28-checkpoint alternate ring chain; cover all Side pie cancellations and native same-conversation retry. Reset the private native picker between inventory openings. Debug only; no release artifacts.
+
+## 2026-10-25 — update
+
 Verify all ten native history chapter links, their page images and returns to contents; preserve original masked tab input. Debug checks only.
 
 ## 2026-10-25 — update

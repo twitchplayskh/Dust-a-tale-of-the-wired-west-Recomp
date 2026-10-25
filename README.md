@@ -21,6 +21,8 @@ film, including transitions between chained movies.
 Native checks cover all 71 history/Yunni book pages, forward/back navigation,
 page limits and Yunni's bookmark controls.
 All ten history-book chapter links and returns to contents also pass native checks.
+Additional routes cover Ruby's gun theft and its alternate ring-recovery chain,
+plus cancelling and retrying Side's pie trade.
 
 ## Build
 

@@ -397,6 +397,10 @@ struct Application {
     }
     void presentMedia(const GameHost::Media &m, uint64_t serial) {
         using K = GameHost::Media::Kind;
+        // A cancelled gift can reopen inventory in the same conversation.
+        // Each original selector entry needs fresh native item/OK clicks.
+        if (storyDialogueTest && !storyPicker.empty() && game->flatName() != "avatar")
+            storyPickerStep = 0;
         log << "media " << int(m.kind) << " " << m.name << "\n";
         switch (m.kind) {
         case K::Movie: {

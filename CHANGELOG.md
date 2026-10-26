@@ -2,6 +2,10 @@
 
 ## 2026-10-26 — update
 
+Document verified temple puzzle exits, item retention, failed-answer retries and partial flute/tumbler save restoration; 17 earned model cases and six native input checks pass. Source-only update, no release artifacts.
+
+## 2026-10-26 — update
+
 Fix the mine skeleton snapping back after map wraps: actor position setters now cancel pending movement, matching the original setters. Verified 60 alternate campaign routes, native mask drag and duel/finale, 18 Debug tests and a clean source build. No release artifacts.
 
 ## 2026-10-26 — update

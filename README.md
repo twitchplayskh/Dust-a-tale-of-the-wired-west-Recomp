@@ -31,6 +31,9 @@ Focused native checks verify those payment and cancellation menus.
 Sophie's afternoon dialogue also passes nested cancellation and timed expiry.
 Further native checks cover the Mayor/Sonoma progression and Doc's advice for
 different missing equipment.
+Temple checks cover leaving unfinished puzzles, returning inserted items,
+rejecting a wrong flute offering, retrying failed answers, and restoring
+partly entered flute and tumbler solutions from a save.
 
 ## Build
 

@@ -1983,6 +1983,11 @@ V GameHost::command(uint16_t op, const std::vector<V> &a, bool wants) {
     case 16003:
     case 16017:
         if (a.size() == 4) {
+            // DF.EXE 0040b6b0 cancels the actor's walk/turn slot through
+            // 0040f6a0 before committing its new position. Otherwise a
+            // pending turn can restore stale coordinates after a mine wrap.
+            if (op == 16003)
+                std::erase_if(walks, [&](const Walk &w) { return w.name == e.name; });
             e.x = ni(1);
             e.y = ni(2);
             e.z = ni(3);
@@ -1998,6 +2003,9 @@ V GameHost::command(uint16_t op, const std::vector<V> &a, bool wants) {
     case 16004:
     case 16018:
         if (a.size() == 3) {
+            // The original actorxy setter (0040ba60) has the same cancellation.
+            if (op == 16004)
+                std::erase_if(walks, [&](const Walk &w) { return w.name == e.name; });
             e.x = ni(1);
             e.y = ni(2);
             e.is3d = false;

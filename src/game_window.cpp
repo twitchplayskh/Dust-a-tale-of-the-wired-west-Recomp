@@ -72,6 +72,8 @@ struct Application {
     bool storyTimeoutPending = false, storyTimeoutResuming = false;
     int storySteps = 0;
     std::string storyAction, storyExpected;
+    bool storyGiving = false;
+    POINT storyDrop{};
     std::string storyPicker;
     int storyPickerStep = 0;
     int storyPickerPolls = 0;
@@ -1427,7 +1429,40 @@ struct Application {
                     postTarget("actor", storyAction.substr(6));
                 else if (storyAction == "key:uparrow")
                     PostMessageW(window, WM_KEYDOWN, VK_UP, 0);
-                else if (storyAction.starts_with("point:")) {
+                else if (storyAction.starts_with("give:")) {
+                    const auto colon = storyAction.find(':', 5);
+                    if (colon == std::string::npos)
+                        throw std::runtime_error("native gift requires give:ITEM:ACTOR");
+                    const auto item = storyAction.substr(5, colon - 5),
+                               actor = storyAction.substr(colon + 1);
+                    if (game->vm.global("handitem").text != item)
+                        throw std::runtime_error("native gift item is not selected");
+                    captureWorld();
+                    std::optional<POINT> drop;
+                    int nearest = 512 * 512 + 384 * 384;
+                    for (const auto &region : world.hits) {
+                        if (region.kind != "actor" || region.name != actor)
+                            continue;
+                        const int cx = (region.left + region.right) / 2,
+                                  cy = (region.top + region.bottom) / 2;
+                        for (int y = std::max(0, region.top); y < std::min(264, region.bottom); ++y)
+                            for (int x = std::max(0, region.left); x < std::min(512, region.right);
+                                 ++x) {
+                                const int distance = (x - cx) * (x - cx) + (y - cy) * (y - cy);
+                                const auto *hit = hitGame(world, x, y);
+                                if (distance < nearest && hit && hit->kind == "actor" &&
+                                    hit->name == actor) {
+                                    nearest = distance;
+                                    drop = clientPoint(window, x, y);
+                                }
+                            }
+                    }
+                    if (!drop)
+                        throw std::runtime_error("native gift actor is not visible");
+                    storyDrop = *drop;
+                    storyGiving = true;
+                    postTarget("prop", item);
+                } else if (storyAction.starts_with("point:")) {
                     auto coords = storyAction.substr(6);
                     std::replace(coords.begin(), coords.end(), ':', ' ');
                     int x = -1, y = -1;
@@ -1438,8 +1473,8 @@ struct Application {
                     PostMessageW(window, WM_LBUTTONDOWN, MK_LBUTTON | testInput,
                                  MAKELPARAM(p.x, p.y));
                 } else
-                    throw std::runtime_error(
-                        "native story action requires actor:NAME, point:X:Y or key:uparrow");
+                    throw std::runtime_error("native story action requires actor:NAME, point:X:Y, "
+                                             "give:ITEM:ACTOR or key:uparrow");
                 return;
             }
             if (storyChoiceIndex < storyChoices.size()) {
@@ -2435,6 +2470,14 @@ LRESULT CALLBACK procedure(HWND h, UINT m, WPARAM w, LPARAM l) {
         SetCapture(h);
         app->click(GET_X_LPARAM(l), GET_Y_LPARAM(l));
         if (app->smoke) {
+            if (app->storyGiving) {
+                app->storyGiving = false;
+                const auto p = app->storyDrop;
+                PostMessageW(h, WM_MOUSEMOVE, MK_LBUTTON | testInput, MAKELPARAM(p.x, p.y));
+                app->testReleaseAt =
+                    std::chrono::steady_clock::now() + std::chrono::milliseconds(220);
+                return 0;
+            }
             if (app->storyDialogueTest && !app->storyPicker.empty() &&
                 app->game->flatName() == "avatar") {
                 app->testReleaseAt =

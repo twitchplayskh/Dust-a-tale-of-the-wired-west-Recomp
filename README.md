@@ -14,6 +14,8 @@ restoration.
 This is a preview release. The campaign reaches its ending in scripted
 verification, with additional native-window checks. Some optional story paths,
 presentation details and hardware configurations still need verification.
+Fixed the mine puzzle's skeleton snapping back to its old position after a map
+wrap, which could prevent giving it the mask.
 Additional checks cover Oona and Isao's alternate ring-recovery path, including
 the piano puzzle, cancellation and retries.
 Movie wipes retain the current room image and fade level while revealing the

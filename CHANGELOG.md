@@ -2,6 +2,10 @@
 
 ## 2026-10-26 — update
 
+Fix the mine skeleton snapping back after map wraps: actor position setters now cancel pending movement, matching the original setters. Verified 60 alternate campaign routes, native mask drag and duel/finale, 18 Debug tests and a clean source build. No release artifacts.
+
+## 2026-10-26 — update
+
 Verify Mayor/Sonoma progression with ten Debug routes and six native cases; verify Doc advice, cancellation and equipment clock gating with fourteen model and five native cases. Extend private native assertions to actor visibility. Clean Debug source build passes; no release artifacts.
 
 ## 2026-10-26 — update

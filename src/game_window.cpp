@@ -1464,6 +1464,8 @@ struct Application {
                     actual = std::to_string(game->props().at(name.substr(11)).degree);
                 else if (name.starts_with("actorowner."))
                     actual = game->actors().at(name.substr(11)).owner;
+                else if (name.starts_with("actorvisible."))
+                    actual = game->actors().at(name.substr(13)).visible ? "1" : "0";
                 else {
                     const auto global = game->vm.global(name);
                     actual = global.type == ScriptValue::Type::String

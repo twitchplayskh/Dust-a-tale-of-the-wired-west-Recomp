@@ -2,6 +2,10 @@
 
 ## 2026-10-26 — update
 
+Verify Mayor/Sonoma progression with ten Debug routes and six native cases; verify Doc advice, cancellation and equipment clock gating with fourteen model and five native cases. Extend private native assertions to actor visibility. Clean Debug source build passes; no release artifacts.
+
+## 2026-10-26 — update
+
 Add read-only authored camera previews without changing game state. Verify Sophie ring recovery through 41 earned checkpoints and five native payment menus, plus nested dialogue cancellation and timeout. Debug tests and clean public-source build pass; no release artifacts.
 
 ## 2026-10-25 — update

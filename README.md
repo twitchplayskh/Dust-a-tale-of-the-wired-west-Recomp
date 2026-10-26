@@ -27,6 +27,8 @@ Sophie’s alternate ring recovery also passes insufficient funds, the earned
 history-book sale, cancellation, refusal, the $75 payment and return to Jones.
 Focused native checks verify those payment and cancellation menus.
 Sophie's afternoon dialogue also passes nested cancellation and timed expiry.
+Further native checks cover the Mayor/Sonoma progression and Doc's advice for
+different missing equipment.
 
 ## Build
 

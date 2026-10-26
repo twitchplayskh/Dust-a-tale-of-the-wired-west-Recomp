@@ -1922,6 +1922,11 @@ V GameHost::command(uint16_t op, const std::vector<V> &a, bool wants) {
             e.is3d = ni(1) != 0;
         return V::boolean(e.is3d);
     case 16002:
+        // DF.EXE 0040af20 stores only the low byte of an actor's facing.
+        // Prop degrees select frames and retain their full integer value.
+        if (a.size() > 1)
+            e.degree = ni(1) & 255;
+        return V::integer(e.degree);
     case 16016:
         return integerProperty(e.degree);
     case 16014:

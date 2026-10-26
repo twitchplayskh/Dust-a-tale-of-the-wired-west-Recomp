@@ -16,6 +16,8 @@ verification, with additional native-window checks. Some optional story paths,
 presentation details and hardware configurations still need verification.
 Fixed the mine puzzle's skeleton snapping back to its old position after a map
 wrap, which could prevent giving it the mask.
+Named actor placement now also clears stale movement, preventing a pending
+walk or turn from overwriting a character's newly assigned location.
 Additional checks cover Oona and Isao's alternate ring-recovery path, including
 the piano puzzle, cancellation and retries.
 Movie wipes retain the current room image and fade level while revealing the

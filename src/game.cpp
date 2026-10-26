@@ -1963,6 +1963,10 @@ V GameHost::command(uint16_t op, const std::vector<V> &a, bool wants) {
     case 16006:
     case 16020:
         if (a.size() > 1) {
+            // DF.EXE 0040abd0 cancels movement before assigning a named star,
+            // including custom/resume markers; the getter leaves it intact.
+            if (op == 16006)
+                std::erase_if(walks, [&](const Walk &w) { return w.name == e.name; });
             e.star = ss(1);
             e.starPending = false;
             if (!e.star.empty() && e.star != "custom" && e.star != "resume") {

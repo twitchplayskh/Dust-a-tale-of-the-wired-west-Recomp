@@ -2,6 +2,10 @@
 
 ## 2026-10-26 — update
 
+Fix stale walks and turns overriding named actor placement: actorstar now cancels pending movement, matching the original setter while preserving getters and prop behavior. Verified a failing-then-passing resource regression, 18 Debug tests, 60 alternate campaign routes, native duel/finale and mine mask handoff, and the source-only Debug build. No release artifacts.
+
+## 2026-10-26 — update
+
 Document verified temple puzzle exits, item retention, failed-answer retries and partial flute/tumbler save restoration; 17 earned model cases and six native input checks pass. Source-only update, no release artifacts.
 
 ## 2026-10-26 — update

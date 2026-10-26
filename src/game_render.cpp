@@ -221,7 +221,8 @@ void drawSprite(GameFrame &out, const Draw &draw, const Camera *camera,
         out.hits.push_back(std::move(hit));
 }
 } // namespace
-GameFrame renderGame(const GameHost &host, RestorationCache *cache, RestorationSettings settings) {
+GameFrame renderGame(const GameHost &host, RestorationCache *cache, RestorationSettings settings,
+                     std::optional<Standpoint> viewpoint) {
     GameFrame out;
     out.rgb.resize(size_t(out.width) * out.height, 0);
     out.labels = host.textLabels();
@@ -249,9 +250,9 @@ GameFrame renderGame(const GameHost &host, RestorationCache *cache, RestorationS
     std::optional<FrameBuffer> background;
     std::optional<Camera> camera;
     if (showSet) {
-        const auto p = host.standpoint();
+        const auto p = viewpoint.value_or(host.standpoint());
         const int degree = heading(p.facing);
-        background = host.motionFrame() ? *host.motionFrame() : set->standing(p);
+        background = !viewpoint && host.motionFrame() ? *host.motionFrame() : set->standing(p);
         for (int y = 0; y < set->viewH; ++y)
             for (int x = 0; x < set->viewW; ++x)
                 out.rgb[size_t(y) * out.width + x] =
@@ -267,7 +268,7 @@ GameFrame renderGame(const GameHost &host, RestorationCache *cache, RestorationS
                         set->viewW,
                         set->viewH,
                         128 - set->cameraSetback};
-        if (auto motion = host.motionCamera()) {
+        if (auto motion = host.motionCamera(); motion && !viewpoint) {
             camera->x = motion->x;
             camera->y = motion->y;
             camera->degree = motion->degree;

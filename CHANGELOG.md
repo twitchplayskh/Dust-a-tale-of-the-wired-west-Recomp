@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-10-26 — update
+
+Add read-only authored camera previews without changing game state. Verify Sophie ring recovery through 41 earned checkpoints and five native payment menus, plus nested dialogue cancellation and timeout. Debug tests and clean public-source build pass; no release artifacts.
+
 ## 2026-10-25 — update
 
 Verify Ruby gun theft and its 28-checkpoint alternate ring chain; cover all Side pie cancellations and native same-conversation retry. Reset the private native picker between inventory openings. Debug only; no release artifacts.

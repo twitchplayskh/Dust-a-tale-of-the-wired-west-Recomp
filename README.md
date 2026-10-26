@@ -23,6 +23,10 @@ page limits and Yunni's bookmark controls.
 All ten history-book chapter links and returns to contents also pass native checks.
 Additional routes cover Ruby's gun theft and its alternate ring-recovery chain,
 plus cancelling and retrying Side's pie trade.
+Sophie’s alternate ring recovery also passes insufficient funds, the earned
+history-book sale, cancellation, refusal, the $75 payment and return to Jones.
+Focused native checks verify those payment and cancellation menus.
+Sophie's afternoon dialogue also passes nested cancellation and timed expiry.
 
 ## Build
 

@@ -2,6 +2,10 @@
 
 ## 2026-10-26 — update
 
+Document verified Day3 quest hints, late NPC conversations and Thunderbird-before-safe progression. No engine or release binary changes.
+
+## 2026-10-26 — update
+
 Wrap actor facing angles to the original 0-255 range without changing prop frames or pending motion. Verified 18 Debug tests, original turning callbacks, 60 earned campaign checkpoints, native duel/finale, range birds and Laurel dialogue. Source only; no release artifacts.
 
 ## 2026-10-26 — update

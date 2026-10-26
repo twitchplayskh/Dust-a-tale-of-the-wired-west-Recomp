@@ -37,6 +37,12 @@ Temple checks cover leaving unfinished puzzles, returning inserted items,
 rejecting a wrong flute offering, retrying failed answers, and restoring
 partly entered flute and tumbler solutions from a save.
 
+Further verified routes include the original Day 3 quest hints and their
+waiting periods, Ruby's pre/post-flute responses, Doc's cure handoff and quest
+closure, Flippo's nested story menus and Sonoma-dependent dialogue, and
+Ned/Dell's later conversations. The Thunderbird can also be obtained before
+the safe's stone; the bedtime gate and continuation into Day 4 pass.
+
 ## Build
 
 Install Visual Studio 2022 or newer with **Desktop development with C++**, a

@@ -1,5 +1,9 @@
 # Changes
 
+## 2026-11-13 — update
+
+Document both verified Fear and Marie ring recovery routes through Day 5, native duel and finale checks, and additional dialogue branches. Documentation only; no engine or release changes.
+
 ## 2026-10-26 — update
 
 Document verified Day3 quest hints, late NPC conversations and Thunderbird-before-safe progression. No engine or release binary changes.

@@ -43,6 +43,12 @@ closure, Flippo's nested story menus and Sonoma-dependent dialogue, and
 Ned/Dell's later conversations. The Thunderbird can also be obtained before
 the safe's stone; the bedtime gate and continuation into Day 4 pass.
 
+Both Fear and Marie ring recovery routes reach the Day 5 ending in checkpoint
+tests: trading the history book to Marie, or selling it to Blood and recovering
+the ring without a trade. Each route also passes native timed duel and finale
+checks. Further checks cover Marie's third quiz question and both versions of
+her night treasure offer, plus Fear's replies before and after the flute quest.
+
 ## Build
 
 Install Visual Studio 2022 or newer with **Desktop development with C++**, a

@@ -2,6 +2,10 @@
 
 ## 2026-11-13 — update
 
+Reject original game folders missing DATA or MOVIES before saving launcher settings or starting the game. Verified both incomplete folder cases and successful startup with the original files. Source only; no release build.
+
+## 2026-11-13 — update
+
 Document both verified Fear and Marie ring recovery routes through Day 5, native duel and finale checks, and additional dialogue branches. Documentation only; no engine or release changes.
 
 ## 2026-10-26 — update

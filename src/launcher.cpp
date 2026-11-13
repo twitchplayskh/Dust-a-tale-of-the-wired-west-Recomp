@@ -274,7 +274,8 @@ struct Launcher {
         GetWindowTextW(root, folder, int(std::size(folder)));
         settings.gameRoot = folder;
         if (!std::filesystem::is_directory(settings.gameRoot) ||
-            !std::filesystem::is_directory(std::filesystem::path(folder) / L"MOVIES"))
+            !std::filesystem::is_directory(std::filesystem::path(folder) / L"MOVIES") ||
+            !std::filesystem::is_directory(std::filesystem::path(folder) / L"DATA"))
             throw std::runtime_error(
                 "Choose the original game installation folder containing MOVIES and DATA.");
         auto index = SendMessageW(resolution, CB_GETCURSEL, 0, 0);
